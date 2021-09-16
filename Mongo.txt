@@ -1,0 +1,276 @@
+ To start the Mongod
+ ----------------------------- 
+ run following comamand to start the Mongo db server
+ 
+ C:\Program Files\MongoDB\Server\5.0\bin\mongod
+ or
+ C:\Program Files\MongoDB\Server\5.0\bin\mongod --dbpath "C:\data\db"
+ 
+ 
+ 
+ To start the Mongodb shell run
+  C:\Program Files\MongoDB\Server\5.0\bin\mongo
+ 
+ Mongo Atlas - Cloud based Mongodb
+ MongoDBServer --It is responsible to store our data in database.
+ MongoShell- It is javascipt based application to manage server. By using shell
+ we can perform required CRUD operation. 
+ 
+ GUI Support is also there for MongoDB Shell:
+ Compass
+ Robo T3
+ 
+ 
+ Mongodb ---install -- physicaldatabase
+ Each physical database contain multiple logical database
+ E.g
+ studentdb
+ estoredb
+ 
+ EachDatabase ---->Collections ----->documents
+ collection  -->Table
+ document -->Record/row
+ 
+ There are 3 dafult database
+ -------------------------------
+ 1. admin
+ 2. config
+ 3. local
+ 
+ 1. admin - To store user authentication and authorization information like username,password, roles etc
+ This database is used by administrator while creating, deleting and updating users and while assigning the roles.
+
+2. Config - To store configuration information of mongodb server.
+
+3. local - local database can be used by admin while performing replication process. 
+
+Data Formats in MongoDB
+---------------------------- 
+In which format user sends the data to MongoDB Server
+
+JSON: {name:'indu'}  -- This json will  be converted to BSON and that BSON will be stored.
+End User/Developer will provide data in json format.
+In Mongodb server data will be stored in BSON form.
+
+What are the advantage of using BSON :-
+Efficient and Extra datatype are speciality of BSON over JSON
+
+1. Javascript provide only 6 datatypes
+String,Number,Object,Array,Boolean, Null
+But BSON provide some extra type 
+32-Bit Integer ---NumberInt
+ObjectId
+Date 
+etc
+2. BSON format requires less memory
+
+BSON : - Binary Json
+  
+While saving the data JSON will be converted to BSON and store at Database server.
+While retreiving BSON will be  converted to JSON - At the time of retreival BSON is converted to EJSON
+for understanding purpose.
+
+Insertion of Document/Creation -- JSON to BSON
+Read Operation/Retreival Operation --- BSON to EJSON 
+
+EJSON- Extended Json 
+-----------------------------------------------
+ 
+ Few basic Commands :-
+ 
+ 1. db.version()  --to know version of mongodb server version
+ 2. db.help()  -- to get help of all command
+ 3. show dbs  -to display all logical database available in Mongodb.
+ db.getName() - To see in which database currently you are. 
+ Database Creation :-
+ -----------------------
+ Database will be created dynamically whenever we are creating colletion of inserting document.
+ 4. To create database in Mongodb
+ use <databasename>
+ e.g.
+ use Customer
+  
+  
+ Create Collection
+--------------------------- 
+  5. To Create Collection
+  db.createCollection("emp"){"ok" :"1"}
+  
+  capped Collection :- Put some limit or cap on collection like max documents and size
+  max 1000 documents
+  size 37365278 bytes
+  db.createCollection(name,options)
+  name is String
+  options is json object
+  E.g
+  db.createCollection("emp",{capped: true, size:37365278, max:1000})
+  If collection reached to it capped , old documents will be deleted automatically.
+  
+  Old documents get deleted on basis of timestamp - Oldest document will be deleted automatically.
+  
+   
+   Display all collections :=
+------------------------------------   
+ 6. db.getCollectionNames()   -- To display all collections
+ 6. show collections -- To display all collections
+ 
+ Drop Collection - 
+ -------------------------
+ 7. db.emp.drop()
+ It will drop collection(table)
+ 
+ Drop Database:-
+ -------------------
+ 8. db.dropDatabase()
+ Current database will get deleted.
+ 
+ Insert Data into Collection
+ -------------------------------------
+ db.collection.insert()
+ db.collection.insertOne()
+ db.collection.insertMany()
+ 
+  e.g db.emp.insertOne({}) //It will take one json argument.
+  db.emp.insertOne({eno:100,ename:"sunny",esal:900000,eaddr:"Ggn"})
+  db.emp.insertOne({eno:101,ename:"bunny",esal:900000,eaddr:"Ggn"})
+  
+  db.emp.insertMany([{},{},{}]) //pass the multiple documents as part of array.
+  e.g
+  > db.emp.find()
+{ "_id" : ObjectId("611cae5e0c54686639fba744"), "eno" : 100, "ename" : "sunny", "esal" : 1000000, "eaddr" : "Ggn" }
+{ "_id" : ObjectId("611cb4450c54686639fba746"), "eno" : 102, "ename" : "bunny", "esal" : 9000000, "eaddr" : "Ggn" }
+{ "_id" : ObjectId("611cbabf0c54686639fba747"), "eno" : 103, "ename" : "bunny", "esal" : 8000000, "eaddr" : "del" }
+>
+> db.emp.insertMany([{eno:104,ename:"vunny",esal:900000,eaddr:"rtk"},{eno:105,ename:"munny",esal:900000,eaddr:"rtk"}])
+{
+        "acknowledged" : true,
+        "insertedIds" : [
+                ObjectId("611cd2540c54686639fba749"),
+                ObjectId("611cd2540c54686639fba74a")
+        ]
+}
+
+MongoDB - uses _id for uniquely identify the documents. It does not allow to create duplicate records.
+
+ 
+ Retreive Data from Collection
+  ------------------------------------------
+  db.collection.find()
+  db.collection.findOne()
+  
+ db.emp.find() --to get all document present in collection
+ db.emp.findOne()
+ 
+ E.g
+ > db.emp.find()
+{ "_id" : ObjectId("611cae5e0c54686639fba744"), "eno" : 100, "ename" : "sunny", "esal" : 900000, "eaddr" : "Ggn" }
+{ "_id" : ObjectId("611caf220c54686639fba745"), "eno" : 101, "ename" : "bunny", "esal" : 900000, "eaddr" : "Ggn" }
+ 
+ Update --Update Operation
+ --------------------------
+ db.collection.updateOne()
+ db.collection.updateMany()
+ db.collection.replaceOne()
+ 
+ db.emp.updateOne({ename: "Sunny"},{$set:{esal:1000000}})
+ if esal field is avialable then old value willbe replaced with new value  1000000
+ If field is not already availablethen it will be created
+ 
+ E.g - Note : if anything prefixed with $ symbol, it is predefined word in MongoDB.
+ $set is atomic operator
+  db.emp.updateOne({ename: "sunny"},{$set:{esal:1000000}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+ 
+ 
+ Delete - Delete Operation
+ ---------------------------------
+ db.collection.deleteOne()
+ db.collection.deleteMany()
+ 
+ E.g
+ db.emp.deleteOne({ename:"bunny"})
+ ----------------------------------------------------------------------------------------------
+ Commands are available in javascript file ?
+ Array of documents avialable in json file ?
+ Ordered Insertion
+ Nested Documents
+ Array to Documents
+ ObjectID
+ 
+ Creating Document separately and inserting into collection
+ -------------------------------------------------------------
+ var student = {}
+ student.sname="sham";
+ student.rollno=2
+ student.sub="eng"
+ student.marks=99
+ 
+ E.g
+ > var student = {}
+>  student.sname="sham";
+sham
+>  student.rollno=2
+2
+>  student.sub="eng"
+eng
+>  student.marks=99
+99
+
+> student
+{ "sname" : "sham", "rollno" : 2, "sub" : "eng", "marks" : 99 }
+
+> db.students.insert(student)
+ 
+  > db.students.find()
+{ "_id" : ObjectId("611cbb120c54686639fba748"), "sname" : "Ram", "rollno" : 1, "sub" : "eng", "marks" : 99 }
+{ "_id" : ObjectId("611cf7f60c54686639fba74b"), "sname" : "sham", "rollno" : 2, "sub" : "eng", "marks" : 99 }
+
+Insert Document From Javasript file: - In java script file we took commands
+---------------------------------
+Create javascript file which contains following statement
+db.students.insert({sname : "Mohan", rollno : 3, sub : "eng", marks : 98})
+db.students.insert({sname : "Rohan", rollno : 4, sub : "eng", marks : 99})
+db.students.insert({sname : "Myra", rollno : 5, sub : "eng", marks : 99})
+
+ load("G:\\DMR_INDU\\Microservices\\student.js")
+Note:- load is used to load data from javascript file. Which contains executable command.
+
+
+ Insert Document From JSON file: In json file, data should be in array form
+ ----------------------------------
+For Example - Json file format
+Student.json
+[
+{
+"name":"sunny",
+"rollno" : "40"
+}
+{
+"name":"bunny",
+"rollno" : "40"
+}
+
+]
+
+mongoimport tool  --- It is tool to import documents from json file into Mongodb. 
+
+mongoimport --db databasename --collection collectioname --file filename  --jsonArray
+
+e.g
+mongoimport --db studentdb --collection student -- students.json --jsonArray
+
+Mongoimport create Database and collection automatically if not available
+
+Nested Documents :- Mongo DB can go 100 level of nesting
+-----------------------
+Sometime we take a document inside another document, such type of document is called nested document
+employee 
+{
+eno:100
+name:"durga"
+eaddr: {HNO="234",city:"Rtk", state:"Haryana"}
+}
+
+
+ 
+
